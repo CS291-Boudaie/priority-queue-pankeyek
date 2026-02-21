@@ -52,12 +52,25 @@ class MinHeap:
     def peek(self):
         # TODO: Return (priority, item) but do NOT remove
         # If empty, return None (or raise an error)
-        pass
+        if self.is_empty():
+            return None
+        else:
+            return self.data[0]
 
     def add(self, priority, item):
         # TODO: Add (priority, item) to end of list
         # Then bubble it UP into correct position
-        pass
+        self.data.append((priority, item))
+        i = self.__len__() - 1
+        while i > 0:
+            if self.data[i][0] < self.data[(i-1)//2][0]:
+                temp = self.data[i]
+                self.data[i] = self.data[(i-1)//2]
+                self.data[(i-1)//2] = temp
+                i = (i-1)//2
+            else:
+                break
+        
 
     def pop_min(self):
         # TODO: Remove and return the smallest element (priority, item)
@@ -65,21 +78,78 @@ class MinHeap:
         # 1) swap root with last element
         # 2) pop last element (former root)
         # 3) bubble DOWN new root
-        pass
+        if self.is_empty():
+            return None
+        
+        root = self.data[0]
+        self.data[0] = self.data[self.__len__()-1]
+        self.data[self.__len__()-1] = root
+
+        root = self.data.pop()
+
+        i = 0
+        while i < self.__len__():
+            if (i*2+1) < self.__len__() and self.data[i][0] > self.data[i*2+1][0]:
+                if (i*2+2) < self.__len__() and self.data[i*2+1][0] <= self.data[i*2+2][0]:
+                    temp = self.data[i]
+                    self.data[i] = self.data[i*2+1]
+                    self.data[i*2+1] = temp
+                    i = i*2 + 1
+                else:
+                    if (i*2+2) < self.__len__():
+                        temp = self.data[i]
+                        self.data[i] = self.data[i*2+2]
+                        self.data[i*2+2] = temp
+                        i = i*2 + 2
+                    else:
+                        temp = self.data[i]
+                        self.data[i] = self.data[i*2+1]
+                        self.data[i*2+1] = temp
+                        i = i*2 + 1
+            elif (i*2+2) < self.__len__() and self.data[i][0] > self.data[i*2+2][0]:
+                temp = self.data[i]
+                self.data[i] = self.data[i*2+2]
+                self.data[i*2+2] = temp
+                i = i*2 + 2
+            else:
+                break
+        return root
+        
 
     def _bubble_up(self, idx):
         # TODO: Implement
         # Keep swapping this node with its parent while it has a smaller priority.
         # parent index = (idx - 1) // 2
         # Stop when you reach the root OR parent already has <= priority.
-        pass
+        i = idx
+        while i > 0 and self.data[i][0] < self.data[(i-1)//2][0]:
+            temp = self.data[i]
+            self.data[i] = self.data[(i-1)//2]
+            self.data[(i-1)//2] = temp
+            i = (i-1)//2
 
     def _bubble_down(self, idx):
         # Keep swapping this node downward until the heap property is restored.
         # left child = 2*idx + 1, right child = 2*idx + 2
         # Find the smaller child, then swap if current priority is bigger.
         # Stop when no children exist OR current is <= both children.
-        pass
+        i = idx
+        while i < self.__len__():
+            if (i*2+1) >= self.__len__():
+                break
+            baby = i*2+1
+            if (i*2+2) < self.__len__():
+                if self.data[i*2+2][0] < self.data[i*2+1][0]:
+                    baby = i*2+2
+            if self.data[i][0] > self.data[baby][0]:
+                temp = self.data[i]
+                self.data[i] = self.data[baby]
+                self.data[baby] = temp
+                i = baby
+            else:
+                break
+            
+            
 
 
 # Once you have a min heap, the priority queue is pretty straightforward. 
